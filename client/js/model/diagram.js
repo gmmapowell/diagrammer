@@ -1,18 +1,23 @@
 import { Node } from "./node.js";
 import { Edge } from "./edge.js";
 import { ShapeEdge } from "./shape.js";
+import Shape from "../shapes/shape.js";
+import BoxShape from "../shapes/box.js";
 
 class DiagramModel {
 	constructor(errors) {
 		this.errors = errors;
 		this.nodes = [];
+		this.nodeNames = {};
 		this.edges = [];
 	}
 
 	add(n) {
 		if (n instanceof Node) {
-			if (this.assertUniqueNode(n.name))
+			if (this.assertUniqueNode(n.name)) {
 				this.nodes.push(n);
+				this.nodeNames[n.name] = n;
+			}
 		} else if (n instanceof Edge) {
 			// TODO: at some point (later), we should check that no ends are "dangling", i.e. referencing nodes that are not in the diagram
 			// We can't do this here, because we might not have seen the node yet.
@@ -30,6 +35,24 @@ class DiagramModel {
 			}
 		}
 		return true;
+	}
+
+	validate() {
+		this.validateAndUpdateEdges();
+	}
+
+	validateAndUpdateEdges() {
+		for (var i=0;i<this.edges.length;i++) {
+			var e = this.edges[i];
+			for (var j=0;j<e.ends.length;j++) {
+				var ee = e.ends[j];
+				if (!this.nodeNames[ee.name]) {
+					this.errors.raise("there is no node named " + ee.name);
+				} else {
+					ee.node = this.nodeNames[ee.name];
+				}
+			}
+		}
 	}
 
 	partitionInto(c) {
@@ -95,7 +118,7 @@ class DiagramModel {
 
 	layout(render) {
 		for (var i=0;i<this.nodes.length;i++) {
-			render.shape(i, 0, this.nodes[i]);
+			render.shape(i, 0, new Shape(new BoxShape(), this.nodes[i]));
 		}
 
 		for (var i=0;i<this.edges.length;i++) {

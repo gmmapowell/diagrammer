@@ -50,6 +50,7 @@ function diagram(nodeCount, ...connectors) {
 		}
 		diag.add(e);
 	}
+	diag.validate();
 	return diag;
 }
 
@@ -124,7 +125,7 @@ class ExpectShape {
 	}
 
 	match(s) {
-		expect(s.name).to.equal(this.name);
+		expect(s.info.name).to.equal(this.name);
 	}
 }
 

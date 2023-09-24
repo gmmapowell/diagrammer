@@ -25,7 +25,7 @@ function pipeline(ev) {
 		var portfolio = new Portfolio(errors);
 		model.partitionInto(portfolio);
 		applyToDiv("tabs-row", ensureTabs(portfolio));
-		portfolio.each((graph, tab) => graph.layout(new RenderInto(tab)));
+		portfolio.each((name, graph, tab) => graph.layout(new RenderInto(tab)));
 	}
 }
 
