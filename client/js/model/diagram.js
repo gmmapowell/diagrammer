@@ -1,5 +1,6 @@
 import { Node } from "./node.js";
 import { Edge } from "./edge.js";
+import { ShapeEdge } from "./shape.js";
 
 class DiagramModel {
 	constructor(errors) {
@@ -90,6 +91,17 @@ class DiagramModel {
 			var n = newNodes[i];
 			this.dragEdgesAndNodes(diag, n, unseen);
 		}
+	}
+
+	layout(render) {
+		for (var i=0;i<this.nodes.length;i++) {
+			render.shape(i, 0, this.nodes[i]);
+		}
+
+		for (var i=0;i<this.edges.length;i++) {
+			render.connector([ new ShapeEdge(0, 0, 1, 0, 0), new ShapeEdge(1, 0, -1, 0, 0) ]);
+		}
+		render.done();
 	}
 }
 
