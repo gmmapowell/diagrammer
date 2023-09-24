@@ -1,4 +1,5 @@
 import parser from "./parser.js";
+import loadSampleInto from "./samples.js";
 import TopLevelParser from "./toplevel.js";
 import DiagramModel from "./model/diagram.js";
 import ErrorReporter from "./errors.js";
@@ -7,8 +8,10 @@ import { readText, applyToDiv, ensureTabs } from "./jstda.js";
 import RenderInto from "./render.js";
 
 function initialize() {
+	loadSampleInto(document.getElementsByClassName("text-input")[0]);
 	var updateButton = document.getElementsByClassName("toolbar-update")[0];
 	updateButton.addEventListener("click", pipeline);
+	pipeline();
 }
 
 function pipeline(ev) {
