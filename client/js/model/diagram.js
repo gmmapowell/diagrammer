@@ -1,8 +1,6 @@
 import { Node } from "./node.js";
 import { Edge } from "./edge.js";
-import { ShapeEdge } from "./shape.js";
-import Shape from "../shapes/shape.js";
-import BoxShape from "../shapes/box.js";
+import LayoutAlgorithm from "../layout.js";
 
 class DiagramModel {
 	constructor(errors) {
@@ -117,14 +115,9 @@ class DiagramModel {
 	}
 
 	layout(render) {
-		for (var i=0;i<this.nodes.length;i++) {
-			render.shape(i, 0, new Shape(new BoxShape(), this.nodes[i]));
-		}
-
-		for (var i=0;i<this.edges.length;i++) {
-			render.connector([ new ShapeEdge(0, 0, 1, 0, 0), new ShapeEdge(1, 0, -1, 0, 0) ]);
-		}
-		render.done();
+		var alg = new LayoutAlgorithm(this.errors, this.nodes, this.nodeNames, this.edges);
+		alg.layout();
+		alg.render(render);
 	}
 }
 

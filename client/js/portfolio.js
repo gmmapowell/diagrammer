@@ -24,7 +24,6 @@ class Portfolio {
 			var d = this.diagrams[i];
 			var t = findTabFor(current, d.named);
 			if (!t) {
-				console.log("adding tab for " + d.named);
 				t = addDiagramTab(tabrow, d.named);
 			} else {
 				delete toRemove[d.named];
@@ -66,6 +65,8 @@ function addDiagramTab(tabs, name) {
 	ti.appendChild(cd);
 	var c = document.createElement("canvas");
 	c.className="diagram";
+	c.setAttribute("width", "1200");
+	c.setAttribute("height", "800");
 	cd.appendChild(c);
 	t.appendChild(cd);
 	tabs.appendChild(t);

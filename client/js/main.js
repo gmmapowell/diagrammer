@@ -27,6 +27,9 @@ function pipeline(ev) {
 		applyToDiv("tabs-row", ensureTabs(portfolio));
 		portfolio.each((name, graph, tab) => graph.layout(new RenderInto(tab)));
 	}
+	if (errors.hasErrors()) {
+		applyToDiv("error-messages", tab => errors.show(tab));
+	}
 }
 
 window.addEventListener('load', initialize);

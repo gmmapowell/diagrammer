@@ -10,6 +10,10 @@ function loadSampleInto(area) {
 				area.value = twoboxes();
 				break;
 			}
+			case "3": {
+				area.value = threeboxesY();
+				break;
+			}
 		}
 	}
 }
@@ -30,6 +34,23 @@ function twoboxes() {
 		"edge\n" + 
 		"    from producer\n" +
 		"    to consumer\n"
+	;
+}
+
+function threeboxesY() {
+	return "" +
+		"node producer\n" +
+		"    label 'Producer'\n" +
+		"node consumer\n" +
+		"    label 'Consumer'\n" +
+		"node observer\n" +
+		"    label 'Observer'\n" +
+		"edge\n" + 
+		"    from producer\n" +
+		"    to consumer\n" +
+		"edge\n" + 
+		"    from producer\n" +
+		"    to observer\n"
 	;
 }
 
