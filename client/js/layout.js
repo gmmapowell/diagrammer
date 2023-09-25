@@ -15,6 +15,11 @@ class LayoutAlgorithm {
 		// handle the empty diagram
 		if (this.nodes.length == 0) return;
 
+		this.placeNodes();
+		this.connectNodes();
+	}
+
+	placeNodes() {
 		// The frontier model is designed to provide us with the nodes in a "most connected" order
 		var frontier = new PushFrontier(this.nodes, this.edges);
 
@@ -32,6 +37,22 @@ class LayoutAlgorithm {
 
 			// noew place it somewhere near there that isn't occupied
 			this.placement.place(avgpos.x, avgpos.y, this.nameMap[name]);
+		}
+	}
+
+	connectNodes() {
+		for (var i=0;i<this.edges.length;i++) {
+			var e = this.edges[i];
+			if (e.ends.length != 2) {
+				this.errors.raise("cannot handle this case yet");
+				continue;
+			}
+			var f = e.ends[0];
+			var t = e.ends[1];
+			var fn = this.placement.isPlaced(f.name);
+			var tn = this.placement.isPlaced(t.name);
+			// This is nothing like sophisticated enough for 90% of cases.  But it passes all current unit tests
+			this.placement.connect([ new ShapeEdge(fn.x, fn.y, tn.x-fn.x, tn.y - fn.y, 0), new ShapeEdge(tn.x, tn.y, fn.x - tn.x, fn.y - tn.y, 0) ]);
 		}
 	}
 
@@ -54,13 +75,14 @@ class LayoutAlgorithm {
 
 	// Once we've done all the hard work, rendering them should be easy ...
 	render(renderInto) {
-		this.placement.each( item => {
+		this.placement.eachNode( item => {
 			renderInto.shape(item.x, item.y, new Shape(new BoxShape(), item.node));
 		});
 
-		for (var i=0;i<this.edges.length;i++) {
-			renderInto.connector([ new ShapeEdge(0, 0, 1, 0, 0), new ShapeEdge(1, 0, -1, 0, 0) ]);
-		}
+		this.placement.eachConnector( pts => {
+			renderInto.connector(pts);
+		});
+
 		renderInto.done();
 	}
 }
@@ -187,6 +209,7 @@ class Placement {
 		this.errors = errors;
 		this.placed = [];
 		this.placement = {};
+		this.connectors = [];
 	}
 
 	// attempt to place a node in the grid at a given position
@@ -199,6 +222,10 @@ class Placement {
 		var p = { x: xy.x, y: xy.y, node };
 		this.placed.push(p);
 		this.placement[node.name] = p;
+	}
+
+	connect(pts) {
+		this.connectors.push(pts);
 	}
 
 	// find a slot for the node to go in, ideally the one it asked for
@@ -232,9 +259,15 @@ class Placement {
 		return this.placement[name];
 	}
 
-	each(f) {
+	eachNode(f) {
 		for (var i=0;i<this.placed.length;i++) {
 			f(this.placed[i]);
+		}
+	}
+
+	eachConnector(f) {
+		for (var i=0;i<this.connectors.length;i++) {
+			f(this.connectors[i]);
 		}
 	}
 }
