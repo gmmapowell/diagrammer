@@ -1,4 +1,6 @@
+import { clickFor } from "./jstda.js";
 import DiagramModel from "./model/diagram.js";
+import { selectDiagramTab, selectTab } from "./tabbing.js";
 
 class Portfolio {
 	constructor(errors) {
@@ -13,20 +15,23 @@ class Portfolio {
 		return ret;
 	}
 
-	ensureTabs(tabrow) {
+	ensureTabs(tabrow, tabdisplay) {
 		this.tabs = {};
-		var current = tabrow.querySelectorAll(".diagram-tab");
+		var titles = tabrow.querySelectorAll(".diagram-tab");
+		var bodies = tabdisplay.querySelectorAll(".diagram-tab");
 		var toRemove = [];
-		for (var i=0;i<current.length;i++) {
-			toRemove[current[i].dataset["diagramFor"]] = current[i];
+		for (var i=0;i<titles.length;i++) {
+			toRemove[titles[i].dataset["diagramFor"]] = { title: titles[i], body: bodies[i] };
 		}
 		for (var i=0;i<this.diagrams.length;i++) {
 			var d = this.diagrams[i];
-			var t = findTabFor(current, d.named);
+			var t = findTabFor(titles, d.named);
+			var b = findTabFor(bodies, d.named);
 			if (!t) {
-				t = addDiagramTab(tabrow, d.named);
+				t = addDiagramTab(tabrow, tabdisplay, d.named);
 			} else {
 				delete toRemove[d.named];
+				t = { title: t, diagram: b };
 			}
 			this.tabs[d.named] = t;
 		}
@@ -39,7 +44,7 @@ class Portfolio {
 	each(f) {
 		for (var i=0;i<this.diagrams.length;i++) {
 			var d = this.diagrams[i];
-			f(d.named, d.diagram, this.tabs[d.named]);
+			f(d.named, d.diagram, this.tabs[d.named].diagram);
 		}
 	}
 }
@@ -53,24 +58,27 @@ function findTabFor(tabs, name) {
 	}
 }
 
-function addDiagramTab(tabs, name) {
+function addDiagramTab(titles, display, name) {
 	var t = document.createElement("div");
-	t.className = "diagram-tab";
+	t.className = "diagram-tab tab-title";
 	t.dataset["diagramFor"] = name;
-	var ti = document.createElement("div");
-	ti.className = "tab-title";
-	ti.appendChild(document.createTextNode(name));
-	t.appendChild(ti);
+	t.appendChild(document.createTextNode(name));
+	titles.appendChild(t);
+	clickFor(ev => selectDiagramTab(name)) (t);
+
+	var d = document.createElement("div");
+	d.className = "diagram-tab tab-body";
+	d.dataset["diagramFor"] = name;
 	var cd = document.createElement("div");
-	ti.appendChild(cd);
 	var c = document.createElement("canvas");
 	c.className="diagram";
 	c.setAttribute("width", "1200");
 	c.setAttribute("height", "800");
 	cd.appendChild(c);
-	t.appendChild(cd);
-	tabs.appendChild(t);
-	return t;
-}
+	d.appendChild(cd);
+	display.appendChild(d);
+
+	return { title: t, diagram: d };
+ }
 
 export default Portfolio;

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+scp -r client/* gmmapowell@gmmapowell.com:diagram.gmmapowell.com/public
