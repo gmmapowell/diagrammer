@@ -1,4 +1,5 @@
 import CanvasAbstraction from "./canvasabstraction.js";
+import { NodeLabel } from "./model/node.js";
 
 var minCanal = 30;
 
@@ -84,7 +85,30 @@ class RenderInto {
 	drawShape(x, y, shape) {
 		var col = this.columns[x];
 		var row = this.rows[y];
-		shape.render(this.drawto, col.from, row.from, col.to-col.from, row.to-row.from);
+		var left = col.from;
+		var top = row.from;
+		var width = col.to - col.from;
+		var height = row.to - row.from;
+		var cx = left + width/2;
+		var cy = top + height/2;
+		shape.render(this.drawto, left, top, width, height);
+
+		// try and show the label (if any)
+		var label = this.findProp(shape, NodeLabel);
+		if (label) {
+			this.drawto.text(label.name, cx, cy, width * .75, height * .75);
+		}
+	}
+
+	findProp(shape, clz) {
+		if (!shape.info || !shape.info.props) return;
+		var ps = shape.info.props;
+		for (var i=0;i<ps.length;i++) {
+			var p = ps[i];
+			if (p instanceof clz)
+				return p;
+		}
+		return null;
 	}
 
 	drawConnector(pts) {

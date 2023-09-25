@@ -2,7 +2,7 @@ import { expect } from "chai";
 import DiagramModel from "../../js/model/diagram.js";
 import { ShapeEdge } from "../../js/model/shape.js";
 import { NoError } from "./errorsupport.js";
-import { Node } from "../../js/model/node.js";
+import { Node, NodeLabel } from "../../js/model/node.js";
 import { Edge, EdgeEnd } from "../../js/model/edge.js";
 
 describe('Layout', () => {
@@ -50,6 +50,7 @@ function diagram(nodeCount, ...connectors) {
 	var diag = new DiagramModel(new NoError());
 	for (var i=0;i<nodeCount;i++) {
 		var n = new Node("node"+(i+1));
+		n.add(new NodeLabel("node"+(i+1)));
 		diag.add(n);
 	}
 	for (var i=0;i<connectors.length;i++) {
