@@ -9,7 +9,6 @@ describe('Layout', () => {
 	var into;
 	beforeEach(() => {
 		into = new MockRender();
-	// 	portfolio = new MockPortfolio(new NoError());
 	});
 
 	it('an empty diagram has nothing except done', () => {
