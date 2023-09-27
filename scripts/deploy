@@ -1,3 +1,5 @@
 #!/bin/bash
 
-scp -r client/* gmmapowell@gmmapowell.com:diagram.gmmapowell.com/public
+scp -r client/css gmmapowell@gmmapowell.com:diagram.gmmapowell.com/public
+scp client/index.html gmmapowell@gmmapowell.com:diagram.gmmapowell.com/public
+scp dist/main.js gmmapowell@gmmapowell.com:diagram.gmmapowell.com/public/js
